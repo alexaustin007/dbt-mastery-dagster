@@ -1,0 +1,8 @@
+dbt-core==1.7.19
+dbt-mysql==1.7.0
+dagster
+dagster
+dagster-webserver
+dagster-dbt
+pandas
+
