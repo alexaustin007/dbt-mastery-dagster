@@ -31,7 +31,13 @@ WITH flights_base AS (
           destination_country,
           destination_region,
           destination_latitude,
-          destination_longitude
+          destination_longitude,
+
+          -- Add rank to distinguish flights with same number/route/date
+          ROW_NUMBER() OVER (
+              PARTITION BY flight_number, origin_airport, destination_airport, flight_date 
+              ORDER BY flight_date
+          ) as flight_rank
 
       FROM {{ ref('stg_flights') }}
   ),
@@ -76,7 +82,8 @@ WITH flights_base AS (
               fb.flight_number,
               fb.origin_airport,
               fb.destination_airport,
-              fb.flight_date
+              fb.flight_date,
+              fb.flight_rank
           )) AS flight_key,
 
           oa.origin_airport_key,
@@ -134,7 +141,7 @@ WITH flights_base AS (
       LEFT JOIN airlines a
           ON fb.airline_code = a.airline_code
           {% if is_incremental() %}
-          WHERE fb.flight_date > (SELECT MAX(flight_date) FROM {{ this }})
+          WHERE fb.flight_date > (SELECT coalesce(MAX(flight_date), '1900-01-01') FROM {{ this }})
           {% endif %}
   )
 
