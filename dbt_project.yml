@@ -37,3 +37,11 @@ models:
         +schema: finance
       marketing:
         +schema: marketing
+seeds:
+  dbt_mastery:
+    +schema: seeds
+    seed_airline_alliances:
+      +column_types:
+        airline_code: varchar(10)
+        alliance: varchar(50)
+        alliance_tier: varchar(50)
