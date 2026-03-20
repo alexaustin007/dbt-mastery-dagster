@@ -91,3 +91,8 @@ models:
           description: Route identifier (origin-destination)
           tests:
             - not_null
+        - name: alliance
+          description: Airline alliance (Star Alliance, OneWorld, SkyTeam, None)
+
+        - name: alliance_tier
+          description: Membership tier within the alliance

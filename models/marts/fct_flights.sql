@@ -76,6 +76,13 @@ WITH flights_base AS (
       FROM {{ ref('int_airlines') }}
   ),
 
+  airline_alliances AS (
+    SELECT airline_code,
+           alliance,
+           alliance_tier
+    FROM {{ ref('seed_airline_alliances') }}
+  ),
+
   final AS (
       SELECT
           MD5(CONCAT(
@@ -112,6 +119,8 @@ WITH flights_base AS (
 
           fb.airline_code,
           a.airline_name,
+          al.alliance,
+          al.alliance_tier,
 
           fb.distance_km,
           fb.seats,
@@ -130,6 +139,8 @@ WITH flights_base AS (
       LEFT JOIN enriched_routes er
           ON fb.origin_airport = er.origin_airport
           AND fb.destination_airport = er.destination_airport
+      LEFT JOIN airline_alliances al
+        ON fb.airline_code = al.airline_code
 
       LEFT JOIN origin_airports oa
           ON fb.origin_airport = oa.origin_airport_code
